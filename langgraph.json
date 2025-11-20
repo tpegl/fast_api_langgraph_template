@@ -1,0 +1,11 @@
+{
+    "dependencies": [
+        "./"
+    ],
+    "graphs": {
+        "cv_parser": "./app/graphs/cv_parser/graph.py:graph"
+    },
+    "env": ".env",
+    "python_version": "3.13",
+    "dockerfile_lines": []
+}
