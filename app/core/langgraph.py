@@ -63,5 +63,5 @@ langgraph_manager = LanggraphManager()
 def get_langgraph_client():
     return langgraph_manager.get_client()
 
-async def get_langgraph_assistant(graph_id: str):
+async def get_langgraph_assistant(graph_id: str = "parse_cv"):
     return await langgraph_manager.get_assistant(graph_id=graph_id)
