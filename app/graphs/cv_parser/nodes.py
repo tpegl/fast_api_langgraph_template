@@ -5,6 +5,7 @@ from app.graphs.cv_parser.state import CVParserState
 
 logger = logging.getLogger(__name__)
 
+
 async def validate_input(state: CVParserState):
     validation_errors: list[str] = []
 
@@ -18,8 +19,9 @@ async def validate_input(state: CVParserState):
         return new_state
     else:
         logger.debug(f"Messages types: {[type(msg).__name__ for msg in messages]}")
-    
+
     return state
+
 
 async def handle_failures(state: CVParserState):
     errors_report = {

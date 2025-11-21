@@ -2,6 +2,7 @@ import re
 import string
 import unicodedata
 
+
 def _get_default_allowed_extensions():
     return [
         ".txt",
@@ -10,13 +11,15 @@ def _get_default_allowed_extensions():
         ".doc",
     ]
 
+
 def _get_default_allowed_content_types():
     return [
         "text/plain",
         "application/pdf",
         "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ]
+
 
 def _get_dangerous_extensions():
     return [
@@ -31,8 +34,9 @@ def _get_dangerous_extensions():
         ".pif",
         ".app",
         ".jar",
-        ".msi"
+        ".msi",
     ]
+
 
 def _get_dangerous_content_types():
     return [
@@ -41,21 +45,23 @@ def _get_dangerous_content_types():
         "application/x-sh",
         "application/x-bat",
         "application/x-msi",
-        "applicattion/octet-stream"
+        "applicattion/octet-stream",
     ]
+
 
 def _check_filename_security(filename: str):
     if ".." in filename or "/" in filename or "\\" in filename or "\x00" in filename:
         return False, "Invalid filename deteted"
     return True, ""
 
+
 def validate_file_upload(
     filename: str,
     content_type: str | None,
     file_size: int | None = None,
-    max_size: int = 10 * 1024 * 1024, # 10MB default
+    max_size: int = 10 * 1024 * 1024,  # 10MB default
     allowed_extensions: list[str] | None = None,
-    allowed_content_types: list[str] | None = None
+    allowed_content_types: list[str] | None = None,
 ):
     if not allowed_extensions:
         allowed_extensions = _get_default_allowed_extensions()
@@ -64,7 +70,6 @@ def validate_file_upload(
 
     dangerous_extensions = _get_dangerous_extensions()
     dangerous_content_types = _get_dangerous_content_types()
-
 
     is_valid, error = _check_filename_security(filename=filename)
     if not is_valid:
@@ -81,7 +86,7 @@ def validate_file_upload(
     if file_ext in dangerous_extensions or file_ext not in allowed_extensions:
         return (
             False,
-            f"File type not allowed. Allowed types: {', '.join(allowed_extensions)}"
+            f"File type not allowed. Allowed types: {', '.join(allowed_extensions)}",
         )
 
     if not content_type:
@@ -94,6 +99,7 @@ def validate_file_upload(
         return False, "Invalid file content type"
 
     return True, ""
+
 
 def sanitise_filename(filename: str, max_length: int = 256):
     filename = filename.replace("\x00", "")

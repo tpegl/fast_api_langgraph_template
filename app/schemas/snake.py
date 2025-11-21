@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 
+
 class SnakeModel(BaseModel):
     colour: str | None = Field()
     length: float | None = Field(0.0)

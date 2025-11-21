@@ -3,6 +3,7 @@ from typing import Annotated, TypedDict
 
 from langchain.messages import AnyMessage
 
+
 class CVParserState(TypedDict):
     messages: Annotated[list[AnyMessage], operator.add]
     current_step: str

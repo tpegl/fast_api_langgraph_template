@@ -16,3 +16,8 @@ dependencies = [
     "langsmith>=0.4.44",
     "uvicorn>=0.38.0",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.6",
+]

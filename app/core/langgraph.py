@@ -10,6 +10,7 @@ from langgraph_sdk.schema import Assistant
 logger = logging.getLogger(__name__)
 load_dotenv()
 
+
 class LanggraphManager:
     def __init__(self):
         self.client: LangGraphClient | None = None
@@ -19,7 +20,7 @@ class LanggraphManager:
         try:
             self.client = get_client(
                 url=os.getenv("LANGGRAPH_URL", None),
-                api_key=os.getenv("LANGGRAPH_API_KEY", None)
+                api_key=os.getenv("LANGGRAPH_API_KEY", None),
             )
         except Exception as e:
             logger.error(f"Failed to connect to langgraph: {e}")
@@ -42,7 +43,9 @@ class LanggraphManager:
 
         except Exception as e:
             logger.error(f"Failed to load assistant for graph {graph_id}: {e}")
-            raise HTTPException(503, f"Failed to laod assistant for graph {graph_id}: {e}")
+            raise HTTPException(
+                503, f"Failed to laod assistant for graph {graph_id}: {e}"
+            )
 
     def get_client(self):
         if not self.client:
@@ -60,8 +63,10 @@ class LanggraphManager:
 
 langgraph_manager = LanggraphManager()
 
+
 def get_langgraph_client():
     return langgraph_manager.get_client()
+
 
 async def get_langgraph_assistant(graph_id: str = "parse_cv"):
     return await langgraph_manager.get_assistant(graph_id=graph_id)
