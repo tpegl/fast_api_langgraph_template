@@ -8,6 +8,7 @@ class CVParserState(TypedDict):
     messages: Annotated[list[AnyMessage], operator.add]
     current_step: str
     validation_errors: list[str]
+    extracted_response: str
     extracted_skills: list[dict[str, str]]
     extracted_experience: list[dict[str, str]]
     extracted_summary: str
