@@ -24,10 +24,16 @@ def create_graph():
     graph.add_node("finalise", finalise_processing)
 
     _ = graph.add_conditional_edges(
-        "validate_input", route_after_validation, {"handle_failure": "handle_failure"}
+        "validate_input",
+        route_after_validation,
+        {
+            "handle_failure": "handle_failure",
+            "parse_document": "parse_document"
+        }
     )
     
     graph.add_edge("handle_failure", "finalise")
+    graph.add_edge("parse_document", "finalise")
     graph.add_edge("finalise", END)
 
     return graph.compile()
