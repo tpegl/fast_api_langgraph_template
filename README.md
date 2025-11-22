@@ -22,3 +22,9 @@ Set up a FastAPI and LangGraph project using [UV](https://github.com/astral-sh/u
 - Call the API endpoint using your API interaction tool of choice with a `file`
     - At this point you should be able to see the langgraph cli begin processing the request
 - All going well, get the `thread_id` from the response and call the status endpoint: `http://0.0.0.0:8000/parse/status/{thread_id}/` and you should see either a processing message or the actual response
+
+## TODO
+- [ ] Add some unit tests (_I_ know it works but it should also be provable without running it all)
+- [ ] Improve documentation and commenting everywhere. Code is mostly self-explanatory _to me_ but I wrote the damn thing
+- [ ] Explain the differences between some core LangGraph prompt types and model choices. Their docs are okay but sprawling and not always as in-depth as I'd like. This is a simple example and there are many more options to choose from
+- [ ] Possibly add the option to run purely from local Ollama models
