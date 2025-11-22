@@ -1,9 +1,14 @@
 import logging
 
 from dotenv import load_dotenv
-from langgraph.graph import END, StateGraph
+from langgraph.graph import END, START, StateGraph
 
-from app.graphs.cv_parser.nodes import finalise_processing, handle_failures, parse_document, validate_input
+from app.graphs.cv_parser.nodes import (
+    finalise_processing,
+    handle_failures,
+    parse_document,
+    validate_input,
+)
 from app.graphs.cv_parser.routing import route_after_validation
 from app.graphs.cv_parser.state import CVParserState
 
@@ -23,15 +28,14 @@ def create_graph():
     graph.add_node("parse_document", parse_document)
     graph.add_node("finalise", finalise_processing)
 
+    graph.add_edge(START, "validate_input")
+
     _ = graph.add_conditional_edges(
         "validate_input",
         route_after_validation,
-        {
-            "handle_failure": "handle_failure",
-            "parse_document": "parse_document"
-        }
+        {"handle_failure": "handle_failure", "parse_document": "parse_document"},
     )
-    
+
     graph.add_edge("handle_failure", "finalise")
     graph.add_edge("parse_document", "finalise")
     graph.add_edge("finalise", END)

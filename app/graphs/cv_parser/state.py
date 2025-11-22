@@ -1,7 +1,7 @@
 import operator
 from typing import Annotated, TypedDict
 
-from langchain.messages import AnyMessage
+from langchain_core.messages import AnyMessage
 
 
 class CVParserState(TypedDict):

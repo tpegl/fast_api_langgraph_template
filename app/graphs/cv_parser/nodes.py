@@ -41,28 +41,32 @@ async def handle_failures(state: CVParserState):
 
     return state
 
+
 async def parse_document(state: CVParserState):
     try:
         model = await create_model("parse-cv-and-grade")
-        conf = RunnableConfig(
-            callbacks=extra_invoke_conf["callbacks"],
-            configurable={}
-        )
+        conf = RunnableConfig(callbacks=extra_invoke_conf["callbacks"], configurable={})
         messages = state["messages"]
 
         for msg in messages:
             if isinstance(msg, HumanMessage | dict):
-                msg_content = msg.get("content", "") if isinstance(msg, dict) else msg.content
+                msg_content = (
+                    msg.get("content", "") if isinstance(msg, dict) else msg.content
+                )
 
                 preview = (
-                    str(msg_content)[:500] + "..." if len(str(msg_content)) > 500 else str(msg_content)
+                    str(msg_content)[:500] + "..."
+                    if len(str(msg_content)) > 500
+                    else str(msg_content)
                 )
                 logger.debug(f"Sending to LLM (preview): {preview}")
                 break
 
         response = await model.ainvoke(messages, config=conf)
 
-        response_content = response.content if hasattr(response, "content") else str(response)
+        response_content = (
+            response.content if hasattr(response, "content") else str(response)
+        )
 
         new_state = state.copy()
         new_state["messages"] = [response]
@@ -72,6 +76,7 @@ async def parse_document(state: CVParserState):
     except Exception as e:
         logger.error(e)
     return state
+
 
 def finalise_processing(state: CVParserState):
     # TODO: any checks on the state that are deemed necessary after a cursory run
