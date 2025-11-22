@@ -1,14 +1,9 @@
-import operator
-from typing import Annotated, TypedDict
-
-from langchain_core.messages import AnyMessage
+from typing import TypedDict
 
 
 class CVParserState(TypedDict):
-    messages: Annotated[list[AnyMessage], operator.add]
+    job_description: str | None
+    cv: str | None
     current_step: str
     validation_errors: list[str]
     extracted_response: str
-    extracted_skills: list[dict[str, str]]
-    extracted_experience: list[dict[str, str]]
-    extracted_summary: str

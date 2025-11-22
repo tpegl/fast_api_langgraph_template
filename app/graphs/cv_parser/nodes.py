@@ -1,6 +1,5 @@
 import logging
 
-from langchain_core.messages import HumanMessage
 from langchain_core.runnables import RunnableConfig
 
 from app.graphs.cv_parser.state import CVParserState
@@ -15,17 +14,27 @@ extra_invoke_conf = {"callbacks": []}
 
 async def validate_input(state: CVParserState):
     validation_errors: list[str] = []
+    new_state = None
 
-    messages = state.get("messages", [])
+    job_description = state.get("job_description", None)
+    cv = state.get("cv", None)
 
-    if not messages:
-        validation_errors.append("No input messages found")
-        logger.error("No input messages found. Likely an error or called too early.")
+    if not job_description:
+        validation_errors.append("No input job_description found")
+        logger.debug("No input job_description found. Likely an error")
         new_state = state.copy()
         new_state["validation_errors"].append(*validation_errors)
-        return new_state
     else:
-        logger.debug(f"Messages types: {[type(msg).__name__ for msg in messages]}")
+        logger.debug(f"JD = {job_description}")
+
+    if not cv:
+        validation_errors.append("No input cv found")
+        logger.debug("No input cv found. Likely an error")
+        new_state = state.copy()
+        new_state["validation_errors"].append(*validation_errors)
+
+    if new_state:
+        return new_state
 
     return state
 
@@ -35,9 +44,9 @@ async def handle_failures(state: CVParserState):
         "validation_errors": state.get("validation_errors", []),
     }
 
-    logger.error(f"Validation errors found: {len(errors_report['validation_errors'])}")
+    logger.debug(f"Validation errors found: {len(errors_report['validation_errors'])}")
     for validation_error in errors_report["validation_errors"]:
-        logger.error(validation_error)
+        logger.debug(validation_error)
 
     return state
 
@@ -46,36 +55,29 @@ async def parse_document(state: CVParserState):
     try:
         model = await create_model("parse-cv-and-grade")
         conf = RunnableConfig(callbacks=extra_invoke_conf["callbacks"], configurable={})
-        messages = state["messages"]
 
-        for msg in messages:
-            if isinstance(msg, HumanMessage | dict):
-                msg_content = (
-                    msg.get("content", "") if isinstance(msg, dict) else msg.content
-                )
+        logger.debug("Asking LLM if the provided CV is appropriate for the supplied JD")
 
-                preview = (
-                    str(msg_content)[:500] + "..."
-                    if len(str(msg_content)) > 500
-                    else str(msg_content)
-                )
-                logger.debug(f"Sending to LLM (preview): {preview}")
-                break
-
-        response = await model.ainvoke(messages, config=conf)
+        response = await model.ainvoke(
+            {"job_description": state["job_description"], "cv": state["cv"]},
+            config=conf,
+        )
 
         response_content = (
             response.content if hasattr(response, "content") else str(response)
         )
 
         new_state = state.copy()
-        new_state["messages"] = [response]
         new_state["extracted_response"] = response_content
         new_state["current_step"] = "parsing_completed"
         return new_state
     except Exception as e:
-        logger.error(e)
-    return state
+        error_str = f"Failed to parse document due to {e}"
+        logger.error(error_str)
+
+        new_state = state.copy()
+        new_state["validation_errors"].append(error_str)
+        return new_state
 
 
 def finalise_processing(state: CVParserState):

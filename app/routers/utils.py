@@ -3,14 +3,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
-PARSE_CV_PROMPT = """Here is the candidates CV. Please extract all relevant information and return it in easy to understand language while highlighting relevant information based on the job description that this CV is meant to be for.
-
-Below is the Job Description:
-{job_description}
-
-And the CV is a file that has been attached. Parse it and do not leave out any relevant information. If there is any missing information that you'd expect, flag it. DO NOT MAKE UP ANY INFORMATION THAT IS NOT PRESENT."""
-
 MARKDOWN_CODE_BLOCK_QUOTES = "```"
 MARKDOWN_JSON_BLOCK_START = MARKDOWN_CODE_BLOCK_QUOTES + "json"
 

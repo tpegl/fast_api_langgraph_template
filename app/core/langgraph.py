@@ -1,14 +1,15 @@
 import logging
-import os
 
-from dotenv import load_dotenv
 from fastapi import HTTPException
 from langgraph_sdk import get_client
 from langgraph_sdk.client import LangGraphClient
 from langgraph_sdk.schema import Assistant
 
+from app.core.settings import get_settings
+
 logger = logging.getLogger(__name__)
-load_dotenv()
+
+settings = get_settings()
 
 
 class LanggraphManager:
@@ -19,8 +20,7 @@ class LanggraphManager:
     def connect(self):
         try:
             self.client = get_client(
-                url=os.getenv("LANGGRAPH_URL", None),
-                api_key=os.getenv("LANGGRAPH_API_KEY", None),
+                url=settings.langsmith_url, api_key=settings.langsmith_api_key
             )
         except Exception as e:
             logger.error(f"Failed to connect to langgraph: {e}")

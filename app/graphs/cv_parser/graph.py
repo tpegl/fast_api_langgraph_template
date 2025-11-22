@@ -1,6 +1,5 @@
 import logging
 
-from dotenv import load_dotenv
 from langgraph.graph import END, START, StateGraph
 
 from app.graphs.cv_parser.nodes import (
@@ -13,9 +12,6 @@ from app.graphs.cv_parser.routing import route_after_validation
 from app.graphs.cv_parser.state import CVParserState
 
 logger = logging.getLogger(__name__)
-
-
-load_dotenv()
 
 
 def create_graph():
