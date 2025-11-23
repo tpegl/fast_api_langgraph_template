@@ -1,6 +1,5 @@
 import logging
 
-from fastapi import HTTPException
 from langgraph_sdk import get_client
 from langgraph_sdk.client import LangGraphClient
 from langgraph_sdk.schema import Assistant
@@ -28,7 +27,7 @@ class LanggraphManager:
 
     async def get_assistant(self, graph_id: str):
         if not self.client:
-            raise HTTPException(503, f"No assistant found for graph: {graph_id}")
+            raise ValueError(f"No assistant found for graph: {graph_id}")
 
         if graph_id in self.assistants:
             return self.assistants[graph_id]
@@ -42,14 +41,13 @@ class LanggraphManager:
             return self.assistants[graph_id]
 
         except Exception as e:
-            logger.error(f"Failed to load assistant for graph {graph_id}: {e}")
-            raise HTTPException(
-                503, f"Failed to laod assistant for graph {graph_id}: {e}"
-            )
+            msg = f"Failed to load assistant for graph {graph_id}: {e}"
+            logger.error(msg)
+            raise ValueError(msg)
 
     def get_client(self):
         if not self.client:
-            raise HTTPException(503, "Agent was not initialised")
+            raise ValueError("Agent was not initialised")
 
         return self.client
 
